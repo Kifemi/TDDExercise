@@ -25,8 +25,6 @@ namespace TrainSetTests
             testTrain.AddCar(testivaunu1);
             testTrain.AddCar(testivaunu2);
             testTrain.AddCar(testivaunu3);
-            
-
         }
 
         [Test]
@@ -96,9 +94,10 @@ namespace TrainSetTests
         }
 
         [Test]
-        public void TotalHorsePowerAvailableTest()
+        [TestCase(200000)]
+        public void TotalHorsePowerAvailableTest(int result)
         {
-            Assert.AreEqual(testTrain.TotalHorsePowerAvailable(), 100);
+            Assert.Greater(testTrain.TotalHorsePowerAvailable(), result);
         }
 
     }
