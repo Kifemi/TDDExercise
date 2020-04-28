@@ -10,47 +10,23 @@ namespace TrainSetTests
     public class TrainTests
     {
         private Train testTrain;
-        private Locomotive testLocomotive;
+        private Car testivaunu1;
+        private Car testivaunu2;
+        private Car testivaunu3;
 
         [SetUp]
         public void SetUp()
         {
             testTrain = new Train();
-            testLocomotive = new Locomotive("TestiJuna", 5000);
-            testTrain.AddLocomotive(testLocomotive);
-            testTrain.AddLocomotive(new Locomotive("TestiLocomotive", 4000));
-            testTrain.AddCar(new Car("TestiVaunu", 3000));
+            testTrain.AddLocomotive(new Locomotive("TestiVeturi", 1500, 250000));
+            testivaunu1 = new Car("TestiVaunu1", 2500, 500);
+            testivaunu2 = new Car("TestiVaunu2", 2000, 400);
+            testivaunu3 = new Car("TestiVaunu3", 400, 100);
+            testTrain.AddCar(testivaunu1);
+            testTrain.AddCar(testivaunu2);
+            testTrain.AddCar(testivaunu3);
             
-        }
 
-        [Test]
-        public void CreateLocomotiveTest()
-        {
-            Assert.IsNotNull(testLocomotive);
-            Assert.IsTrue(testLocomotive.GetType() == typeof(Locomotive));
-        }
-
-        [Test]
-        [TestCase("TestTrain", 34.5)]
-        [TestCase("TestTrain", -34.5)]
-        public void CreateTrainTest(string name, decimal horsePower)
-        {
-            Train testTrain1 = new Train(name, horsePower);
-
-            Assert.IsNotNull(testTrain1.name);
-            Assert.Greater(testTrain1.HorsePower, 0);
-        }
-
-        [Test]
-        public void AddCarTest() 
-        {
-            Assert.Greater(testTrain.rollingStocks.Count, 0);
-        }
-
-        [Test]
-        public void AddLocomotiveTest()
-        {
-            Assert.IsNotNull(testTrain.HasLocomotive());
         }
 
         [Test]
@@ -66,28 +42,64 @@ namespace TrainSetTests
         }
 
         [Test]
-        [TestCase(1)]
+        [TestCase(3)]
         public void GetAllCarsTest(int testNumber)
         {
             Assert.IsNotNull(testTrain.GetAllCars());
-            Assert.AreEqual(testTrain.GetAllCars().Count, testNumber);
+            Assert.AreEqual(testNumber, testTrain.GetAllCars().Count);
         }
 
         [Test]
-        public void GetAllLocomotivesTest()
+        [TestCase(1)]
+        public void GetAllLocomotivesTest(int testNumber)
         {
             Assert.IsNotNull(testTrain.GetAllLocomotives());
-            Assert.Contains(testLocomotive, testTrain.rollingStocks);
+            Assert.AreEqual(testNumber, testTrain.GetAllLocomotives().Count);
         }
 
-        //[Test]
-        //[TestCase(testTrain)]
-        //public void GetWholeTrainTest(Train train)
-        //{
-        //    Assert.IsNotNull(testTrain.GetWholeTrain());
-        //    Assert.AreEqual(testTrain.GetWholeTrain().Count, testNumber);
-        //}
+        [Test] 
+        [TestCase(4)]
+        public void GetRollingStocksTest(int testNumber)
+        {
+            Assert.IsNotNull(testTrain.GetRollingStocks(testTrain));
+            Assert.AreEqual(testTrain.GetRollingStocks(testTrain).Count, testNumber);
+        }
 
+        [Test]
+        public void HasEnoughHorsePowerTest()
+        {
+            Assert.IsTrue(testTrain.HasEnoughHorsePower());
+        }
+
+        [Test]
+        [TestCase(0, 0, 0, 0, 0)]
+        [TestCase(100.10, 500, 200, 90.35, 180000)]
+        public void CalculateTotalHPRequiredTest(decimal number1, decimal number2, decimal number3, decimal number4, decimal result)
+        {
+            testivaunu1.AddLoad(number1);
+            testivaunu1.AddLoad(number2);
+            testivaunu2.AddLoad(number3);
+            testivaunu3.AddLoad(number4);
+            Assert.Greater(testTrain.CalculateTotalHPRequired(), result);
+        }
+
+        [Test]
+        [TestCase(100.10, 500, 200, 90.35, 790, 800)]
+        public void TotalCargoTest(decimal number1, decimal number2, decimal number3, decimal number4, decimal result1, decimal result2)
+        {
+            testivaunu1.AddLoad(number1);
+            testivaunu1.AddLoad(number2);
+            testivaunu2.AddLoad(number3);
+            testivaunu3.AddLoad(number4);
+            Assert.Greater(testTrain.TotalCargo(), result1);
+            Assert.Less(testTrain.TotalCargo(), result2);
+        }
+
+        [Test]
+        public void TotalHorsePowerAvailableTest()
+        {
+            Assert.AreEqual(testTrain.TotalHorsePowerAvailable(), 100);
+        }
 
     }
 }
